@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="DevelopEnvironment">
+      <UniqueIdentifier>{14082222-eb37-49f5-9dc0-fdeb331f6773}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ExecuteEnvironment">
+      <UniqueIdentifier>{d345846a-02cf-44d4-8ed9-9b7d00ea0961}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DevelopEnvironment\SouceFile">
+      <UniqueIdentifier>{ff73b949-9f16-4328-8c18-302ca442685b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DevelopEnvironment\SouceFile\Utility">
+      <UniqueIdentifier>{f6149e73-f8fa-488a-93c1-7eae6c9d9186}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DevelopEnvironment\SouceFile\Core">
+      <UniqueIdentifier>{425ebbb3-e0a9-4bd2-abbc-18f2790e5a6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DevelopEnvironment\SouceFile\Debugger">
+      <UniqueIdentifier>{18d8e688-0ad1-46e2-b7fb-fa6fe8c2f100}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DevelopEnvironment\SouceFile\Core\Manager">
+      <UniqueIdentifier>{9a0fcb50-36b9-4276-8e87-c8716ff614b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DevelopEnvironment\SouceFile\Core\Procedure">
+      <UniqueIdentifier>{a3ccf437-da27-423a-89ac-eac782a0f4fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DevelopEnvironment\SouceFile\Resource">
+      <UniqueIdentifier>{27beffc6-bb8a-4994-9c5e-4ce0818d18f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DevelopEnvironment\SouceFile\Core\Graphic">
+      <UniqueIdentifier>{15b4f90c-4fa3-4686-997f-9bf403a61899}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ExecuteEnvironment\Resources">
+      <UniqueIdentifier>{d9dbd3e4-7cf8-4364-ae41-46f3cb239fdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ExecuteEnvironment\Resources\HLSL">
+      <UniqueIdentifier>{04c97dba-409f-4d4c-865c-009dfa72bb62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DevelopEnvironment\SouceFile\Utility\DXUtil">
+      <UniqueIdentifier>{9398f75a-cb2b-4a63-b740-f0d1239bb122}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DevelopEnvironment\SouceFile\Main.cpp">
+      <Filter>DevelopEnvironment\SouceFile</Filter>
+    </ClCompile>
+    <ClCompile Include="DevelopEnvironment\SouceFile\PreCompile.cpp">
+      <Filter>DevelopEnvironment\SouceFile</Filter>
+    </ClCompile>
+    <ClCompile Include="DevelopEnvironment\SouceFile\Core\Application.cpp">
+      <Filter>DevelopEnvironment\SouceFile\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="DevelopEnvironment\SouceFile\Core\Manager\Manager.cpp">
+      <Filter>DevelopEnvironment\SouceFile\Core\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="DevelopEnvironment\SouceFile\Core\Window.cpp">
+      <Filter>DevelopEnvironment\SouceFile\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="DevelopEnvironment\SouceFile\Core\Procedure\WindowProcedure.cpp">
+      <Filter>DevelopEnvironment\SouceFile\Core\Procedure</Filter>
+    </ClCompile>
+    <ClCompile Include="DevelopEnvironment\SouceFile\Core\Procedure\DialogProcedure.cpp">
+      <Filter>DevelopEnvironment\SouceFile\Core\Procedure</Filter>
+    </ClCompile>
+    <ClCompile Include="DevelopEnvironment\SouceFile\Core\Graphic\Graphic.cpp">
+      <Filter>DevelopEnvironment\SouceFile\Core\Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="DevelopEnvironment\SouceFile\Core\Manager\ShaderManager.cpp">
+      <Filter>DevelopEnvironment\SouceFile\Core\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="DevelopEnvironment\SouceFile\Utility\DXUtil\DirectX11Utility.cpp">
+      <Filter>DevelopEnvironment\SouceFile\Utility\DXUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="DevelopEnvironment\SouceFile\Utility\DXUtil\DirectX12Utility.cpp">
+      <Filter>DevelopEnvironment\SouceFile\Utility\DXUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="DevelopEnvironment\SouceFile\Utility\DXUtil\DirectXUtility.cpp">
+      <Filter>DevelopEnvironment\SouceFile\Utility\DXUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="DevelopEnvironment\SouceFile\Core\Manager\PipelineStateManager.cpp">
+      <Filter>DevelopEnvironment\SouceFile\Core\Manager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DevelopEnvironment\SouceFile\PreCompile.h">
+      <Filter>DevelopEnvironment\SouceFile</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Type.h">
+      <Filter>DevelopEnvironment\SouceFile</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Core\Application.h">
+      <Filter>DevelopEnvironment\SouceFile\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Debugger\Debugger.h">
+      <Filter>DevelopEnvironment\SouceFile\Debugger</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Core\Manager\Manager.h">
+      <Filter>DevelopEnvironment\SouceFile\Core\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Core\Window.h">
+      <Filter>DevelopEnvironment\SouceFile\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Core\Procedure\WindowProcedure.h">
+      <Filter>DevelopEnvironment\SouceFile\Core\Procedure</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Core\Procedure\DialogProcedure.h">
+      <Filter>DevelopEnvironment\SouceFile\Core\Procedure</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Resource\resource.h">
+      <Filter>DevelopEnvironment\SouceFile\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Core\Graphic\Graphic.h">
+      <Filter>DevelopEnvironment\SouceFile\Core\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Core\Graphic\DirectX11.h">
+      <Filter>DevelopEnvironment\SouceFile\Core\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Core\Graphic\DirectX12.h">
+      <Filter>DevelopEnvironment\SouceFile\Core\Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Core\Manager\ShaderManager.h">
+      <Filter>DevelopEnvironment\SouceFile\Core\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Utility\InheritanceList.h">
+      <Filter>DevelopEnvironment\SouceFile\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Utility\DXUtil\DirectX11Utility.h">
+      <Filter>DevelopEnvironment\SouceFile\Utility\DXUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Utility\DXUtil\DirectX12Utility.h">
+      <Filter>DevelopEnvironment\SouceFile\Utility\DXUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Utility\DXUtil\DirectXUtility.h">
+      <Filter>DevelopEnvironment\SouceFile\Utility\DXUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Core\Manager\PipelineStateManager.h">
+      <Filter>DevelopEnvironment\SouceFile\Core\Manager</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="DevelopEnvironment\SouceFile\Resource\BeginDialog.rc">
+      <Filter>DevelopEnvironment\SouceFile\Resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ExecuteEnvironment\Resources\HLSL\TestShader.hlsl">
+      <Filter>ExecuteEnvironment\Resources\HLSL</Filter>
+    </None>
+    <None Include="ExecuteEnvironment\Resources\HLSL\MaterialRenderingShaderHeader.hlsli">
+      <Filter>ExecuteEnvironment\Resources\HLSL</Filter>
+    </None>
+    <None Include="ExecuteEnvironment\Resources\HLSL\DefaultShader.hlsli">
+      <Filter>ExecuteEnvironment\Resources\HLSL</Filter>
+    </None>
+    <None Include="ExecuteEnvironment\Resources\HLSL\DefaultPixelShader.hlsl">
+      <Filter>ExecuteEnvironment\Resources\HLSL</Filter>
+    </None>
+    <None Include="ExecuteEnvironment\Resources\HLSL\DefaultVertexShader.hlsl">
+      <Filter>ExecuteEnvironment\Resources\HLSL</Filter>
+    </None>
+  </ItemGroup>
+</Project>
