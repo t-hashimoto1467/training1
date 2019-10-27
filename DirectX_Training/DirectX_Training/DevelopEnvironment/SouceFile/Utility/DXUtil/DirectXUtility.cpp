@@ -17,6 +17,8 @@ namespace dx_util {
 
 
 
+#pragma region ShaderCompiler.
+
 using namespace Microsoft::WRL;
 
 
@@ -133,6 +135,208 @@ s32 CompileShader(
 	return RETURN_SUCCESS;
 
 }
+
+#pragma endregion
+
+
+
+#pragma region RasterizerState.
+
+D3D12_RASTERIZER_DESC CreateRasterizerState( RasterizerStateType in_state_type ) {
+
+	D3D12_RASTERIZER_DESC	desc = {};
+
+	// 共通ステートの設定
+	desc.FrontCounterClockwise = FALSE;
+	desc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+	desc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+	desc.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+	desc.DepthClipEnable = TRUE;
+	desc.MultisampleEnable = FALSE;
+	desc.AntialiasedLineEnable = FALSE;
+	desc.ForcedSampleCount = 0;
+	desc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+
+	// 個別ステートの設定
+	switch( in_state_type ) {
+
+		case RasterizerStateType::SOLID_NONE:
+
+			desc.FillMode = D3D12_FILL_MODE_SOLID;
+			desc.CullMode = D3D12_CULL_MODE_NONE;
+
+			break;
+
+		case RasterizerStateType::SOLID_FRONT:
+
+			desc.FillMode = D3D12_FILL_MODE_SOLID;
+			desc.CullMode = D3D12_CULL_MODE_FRONT;
+
+			break;
+
+		case RasterizerStateType::SOLID_BACK:
+
+			desc.FillMode = D3D12_FILL_MODE_SOLID;
+			desc.CullMode = D3D12_CULL_MODE_BACK;
+
+			break;
+
+		case RasterizerStateType::WIREFRAME_NONE:
+
+			desc.FillMode = D3D12_FILL_MODE_WIREFRAME;
+			desc.CullMode = D3D12_CULL_MODE_NONE;
+
+			break;
+
+		case RasterizerStateType::WIREFRAME_FRONT:
+
+			desc.FillMode = D3D12_FILL_MODE_WIREFRAME;
+			desc.CullMode = D3D12_CULL_MODE_FRONT;
+
+			break;
+
+		case RasterizerStateType::WIREFRAME_BACK:
+
+			desc.FillMode = D3D12_FILL_MODE_WIREFRAME;
+			desc.CullMode = D3D12_CULL_MODE_BACK;
+
+			break;
+
+	}
+
+	return desc;
+
+}
+
+#pragma endregion
+
+
+
+#pragma region DepthStencilState.
+
+DepthStencilStateDesc CreateDepthStencilState( DepthStencilStateType in_state_type ) {
+
+	DepthStencilStateDesc desc = {};
+
+	// 共通ステートの設定
+	desc.desc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+
+	// 個別ステートの設定
+	switch( in_state_type ) {
+
+		case DepthStencilStateType::DEPTH_DEFAULT:
+
+			desc.desc.StencilEnable = FALSE;
+			desc.desc.DepthEnable = TRUE;
+			desc.desc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+			desc.format = DXGI_FORMAT_D32_FLOAT;
+
+			break;
+
+	}
+
+	return desc;
+
+}
+
+#pragma endregion
+
+
+
+#pragma region BlendState.
+
+D3D12_BLEND_DESC CreateBlendState( BlendStateType in_state_type ) {
+
+	D3D12_BLEND_DESC desc = {};
+
+	// 共通ステートの設定
+	desc.AlphaToCoverageEnable = false;
+	desc.IndependentBlendEnable = false;
+
+	// 個別ステートの設定
+	switch( in_state_type ) {
+
+		case BlendStateType::BLEND_OPAQUE:
+
+			for( UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i ) {
+				desc.RenderTarget[i].BlendEnable = FALSE;
+				desc.RenderTarget[i].LogicOpEnable = FALSE;
+				desc.RenderTarget[i].SrcBlend = D3D12_BLEND_ONE;
+				desc.RenderTarget[i].DestBlend = D3D12_BLEND_ZERO;
+				desc.RenderTarget[i].BlendOp = D3D12_BLEND_OP_ADD;
+				desc.RenderTarget[i].SrcBlendAlpha = D3D12_BLEND_ONE;
+				desc.RenderTarget[i].DestBlendAlpha = D3D12_BLEND_ZERO;
+				desc.RenderTarget[i].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+				desc.RenderTarget[i].LogicOp = D3D12_LOGIC_OP_NOOP;
+				desc.RenderTarget[i].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+			}
+
+			break;
+
+		case BlendStateType::BLEND_ALPHA:
+
+			for( UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i ) {
+				desc.RenderTarget[i].BlendEnable = TRUE;
+				desc.RenderTarget[i].LogicOpEnable = FALSE;
+				desc.RenderTarget[i].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+				desc.RenderTarget[i].DestBlend = D3D12_BLEND_ZERO;
+				desc.RenderTarget[i].BlendOp = D3D12_BLEND_OP_ADD;
+				desc.RenderTarget[i].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+				desc.RenderTarget[i].DestBlendAlpha = D3D12_BLEND_ZERO;
+				desc.RenderTarget[i].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+				desc.RenderTarget[i].LogicOp = D3D12_LOGIC_OP_NOOP;
+				desc.RenderTarget[i].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+			}
+
+			break;
+
+			break;
+
+		case BlendStateType::BLEND_ADDITIVE:
+
+			for( UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i ) {
+				desc.RenderTarget[i].BlendEnable = TRUE;
+				desc.RenderTarget[i].LogicOpEnable = FALSE;
+				desc.RenderTarget[i].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+				desc.RenderTarget[i].DestBlend = D3D12_BLEND_ONE;
+				desc.RenderTarget[i].BlendOp = D3D12_BLEND_OP_ADD;
+				desc.RenderTarget[i].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+				desc.RenderTarget[i].DestBlendAlpha = D3D12_BLEND_ONE;
+				desc.RenderTarget[i].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+				desc.RenderTarget[i].LogicOp = D3D12_LOGIC_OP_NOOP;
+				desc.RenderTarget[i].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+			}
+
+			break;
+
+			break;
+
+		case BlendStateType::BLEND_NONPREMULTIPLIED:
+
+			for( UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i ) {
+				desc.RenderTarget[i].BlendEnable = TRUE;
+				desc.RenderTarget[i].LogicOpEnable = FALSE;
+				desc.RenderTarget[i].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+				desc.RenderTarget[i].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+				desc.RenderTarget[i].BlendOp = D3D12_BLEND_OP_ADD;
+				desc.RenderTarget[i].SrcBlendAlpha = D3D12_BLEND_SRC_ALPHA;
+				desc.RenderTarget[i].DestBlendAlpha = D3D12_BLEND_INV_SRC_ALPHA;
+				desc.RenderTarget[i].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+				desc.RenderTarget[i].LogicOp = D3D12_LOGIC_OP_NOOP;
+				desc.RenderTarget[i].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+			}
+
+			break;
+
+			break;
+
+	}
+
+	return desc;
+
+}
+
+#pragma endregion
 
 
 

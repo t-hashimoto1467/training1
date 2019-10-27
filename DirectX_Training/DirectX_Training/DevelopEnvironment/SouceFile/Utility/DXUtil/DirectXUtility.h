@@ -10,8 +10,11 @@
 //--------------------------------------------------
 //	Include Header File.
 //--------------------------------------------------
+// DirectX
+#include	<d3d12.h>
+
 // ShaderCompiler
-#include <D3Dcompiler.h>
+#include	<D3Dcompiler.h>
 #pragma comment(lib, "d3dcompiler.lib")
 
 // ComPtr
@@ -55,6 +58,70 @@ s32	CompileShader(
 	ShaderVersion,
 	Microsoft::WRL::ComPtr<ID3DBlob>&
 );
+
+#pragma endregion
+
+
+
+#pragma region RasterizerState.
+
+enum RasterizerStateType {
+
+	SOLID_NONE = 0,
+	SOLID_FRONT,
+	SOLID_BACK,
+	WIREFRAME_NONE,
+	WIREFRAME_FRONT,
+	WIREFRAME_BACK,
+	MAX_RASTERIZER_STATE
+
+};
+
+
+D3D12_RASTERIZER_DESC CreateRasterizerState( RasterizerStateType );
+
+#pragma endregion
+
+
+
+#pragma region DepthStencilState.
+
+enum DepthStencilStateType {
+
+	DEPTH_DEFAULT = 0,
+	MAX_DEPTHSTENCIL_STATE
+
+};
+
+
+struct DepthStencilStateDesc {
+
+	D3D12_DEPTH_STENCIL_DESC	desc;
+	DXGI_FORMAT					format;
+
+};
+
+
+DepthStencilStateDesc CreateDepthStencilState( DepthStencilStateType );
+
+#pragma endregion
+
+
+
+#pragma region BlendState.
+
+enum BlendStateType {
+
+	BLEND_OPAQUE = 0,
+	BLEND_ALPHA,
+	BLEND_ADDITIVE,
+	BLEND_NONPREMULTIPLIED,
+	MAX_BLEND_STATE
+
+};
+
+
+D3D12_BLEND_DESC CreateBlendState( BlendStateType );
 
 #pragma endregion
 

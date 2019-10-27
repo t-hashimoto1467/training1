@@ -8,25 +8,10 @@
 #pragma once
 
 //--------------------------------------------------
-//	Define Macro.
-//--------------------------------------------------
-#define GRAPHIC_DIRECTX_12
-#ifndef GRAPHIC_DIRECTX_12
-#define GRAPHIC_DIRECTX_11
-#endif
-#define GRAPHIC_VERSION_DIRECTX_12 defined( GRAPHIC_DIRECTX_12 )
-#define GRAPHIC_VERSION_DIRECTX_11 defined( GRAPHIC_DIRECTX_11 )
-
-
-//--------------------------------------------------
 //	Include Header File.
 //--------------------------------------------------
 // DirectX
-#if GRAPHIC_VERSION_DIRECTX_12
 #include	"DirectX12.h"
-#elif GRAPHIC_VERSION_DIRECTX_11
-#include	"DirectX11.h"
-#endif
 
 // DXGI
 #include	<dxgi1_4.h>
@@ -62,8 +47,6 @@ public:
 	s32 Initialize( HWND, bool );
 	void Finalize();
 
-#if GRAPHIC_VERSION_DIRECTX_12
-
 public:
 	Microsoft::WRL::ComPtr<ID3D12Device> Get() const {
 		return m_p_device_;
@@ -72,46 +55,7 @@ public:
 private:
 	Microsoft::WRL::ComPtr<ID3D12Device>	m_p_device_;
 
-#elif GRAPHIC_VERSION_DIRECTX_11
-
-public:
-	Microsoft::WRL::ComPtr<ID3D11Device> Get() const {
-		return m_p_device_;
-	}
-
-private:
-	Microsoft::WRL::ComPtr<ID3D11Device>	m_p_device_;
-
-#endif
-
 };
-
-
-
-/**
-*	@class	GraphicContext
-*	@brief	グラフィックスコンテキスト
-**/
-#if GRAPHIC_VERSION_DIRECTX_11
-class GraphicContext {
-
-public:
-	GraphicContext();
-	~GraphicContext();
-
-	s32 Initialize( Microsoft::WRL::ComPtr<ID3D11Device> );
-	void Finalize();
-
-public:
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> Get() const {
-		return m_p_context_;
-	}
-
-private:
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext>	m_p_context_;
-
-};
-#endif
 
 
 
@@ -119,7 +63,6 @@ private:
 *	@class	GraphicCommandQueue
 *	@brief	グラフィックコマンドキュー
 **/
-#if GRAPHIC_VERSION_DIRECTX_12
 class GraphicCommandQueue {
 
 public:
@@ -138,7 +81,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12CommandQueue>	m_p_command_queue_;
 
 };
-#endif
 
 
 
@@ -146,7 +88,6 @@ private:
 *	@class	GraphicCommandAllocator
 *	@brief	グラフィックコマンドアロケーター
 **/
-#if GRAPHIC_VERSION_DIRECTX_12
 class GraphicCommandAllocator {
 
 public:
@@ -165,7 +106,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12CommandAllocator>	m_p_command_allocator_;
 
 };
-#endif
 
 
 
@@ -173,7 +113,6 @@ private:
 *	@class	GraphicCommandList
 *	@brief	グラフィックコマンドリスト
 **/
-#if GRAPHIC_VERSION_DIRECTX_12
 class GraphicCommandList {
 
 public:
@@ -192,7 +131,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12GraphicsCommandList>	m_p_command_list_;
 
 };
-#endif
 
 
 
@@ -206,19 +144,8 @@ public:
 	GraphicSwapChain();
 	~GraphicSwapChain();
 
-#if GRAPHIC_VERSION_DIRECTX_12
-
 	s32 Initialize( HWND, bool, Microsoft::WRL::ComPtr<ID3D12CommandQueue> );
-
-#elif GRAPHIC_VERSION_DIRECTX_11
-
-	s32 Initialize( HWND, bool, Microsoft::WRL::ComPtr<ID3D11Device> );
-	
-#endif
-
 	void Finalize();
-
-#if GRAPHIC_VERSION_DIRECTX_12
 
 public:
 	void ChangeFrameIndex() {
@@ -237,18 +164,6 @@ private:
 
 	u32				m_frame_index_;
 
-#elif GRAPHIC_VERSION_DIRECTX_11
-
-public:
-	Microsoft::WRL::ComPtr<IDXGISwapChain> Get() const {
-		return m_p_swap_chain_;
-	}
-
-private:
-	Microsoft::WRL::ComPtr<IDXGISwapChain>	m_p_swap_chain_;
-
-#endif
-
 };
 
 
@@ -263,19 +178,8 @@ public:
 	GraphicFrameBuffer();
 	~GraphicFrameBuffer();
 
-#if GRAPHIC_VERSION_DIRECTX_12
-
 	s32 Initialize( Microsoft::WRL::ComPtr<ID3D12Device>, Microsoft::WRL::ComPtr<IDXGISwapChain3> );
-
-#elif GRAPHIC_VERSION_DIRECTX_11
-
-	s32 Initialize( Microsoft::WRL::ComPtr<ID3D11Device>, Microsoft::WRL::ComPtr<IDXGISwapChain> );
-
-#endif
-
 	void Finalize();
-
-#if GRAPHIC_VERSION_DIRECTX_12
 
 public:
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetHeap() const {
@@ -293,18 +197,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12Resource>			m_p_frame_buffer_[FRAME_COUNT];
 	u32						m_descript_size_;
 
-#elif GRAPHIC_VERSION_DIRECTX_11
-
-public:
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> Get() const {
-		return m_p_frame_buffer_;
-	}
-
-private:
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView>	m_p_frame_buffer_;
-
-#endif
-
 };
 
 
@@ -319,17 +211,8 @@ public:
 	GraphicDepthStencilBuffer();
 	~GraphicDepthStencilBuffer();
 
-#if GRAPHIC_VERSION_DIRECTX_12
-
 	s32 Initialize( HWND, Microsoft::WRL::ComPtr <ID3D12Device> );
-
-#elif GRAPHIC_VERSION_DIRECTX_11
-
-#endif
-
 	void Finalize();
-
-#if GRAPHIC_VERSION_DIRECTX_12
 
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap> GetHeap() const {
 		return m_p_heap_;
@@ -339,13 +222,6 @@ private:
 	Microsoft::WRL::ComPtr<ID3D12DescriptorHeap>	m_p_heap_;
 	Microsoft::WRL::ComPtr<ID3D12Resource>			m_p_resource_;
 
-#elif GRAPHIC_VERSION_DIRECTX_11
-
-private:
-
-
-#endif
-
 };
 
 
@@ -354,7 +230,6 @@ private:
 *	@class	GraphicFence
 *	@brief	グラフィックフェンス
 **/
-#if GRAPHIC_VERSION_DIRECTX_12
 class GraphicFence {
 
 public:
@@ -384,7 +259,6 @@ private:
 	u64					m_fence_value_;
 
 };
-#endif
 
 
 
@@ -421,11 +295,7 @@ private:
 	void BeginRender();
 	void EndRender();
 
-#if GRAPHIC_VERSION_DIRECTX_12
-
 	void WaitForPreviousFrame();
-
-#endif
 
 private:
 	GraphicDevice				m_device_;
@@ -433,18 +303,10 @@ private:
 	GraphicFrameBuffer			m_frame_buffer_;
 	GraphicDepthStencilBuffer	m_depth_stencil_buffer_;
 
-#if GRAPHIC_VERSION_DIRECTX_12
-
 	GraphicCommandQueue			m_command_queue_;
 	GraphicCommandAllocator		m_command_allocator_;
 	GraphicCommandList			m_command_list_;
 	GraphicFence				m_fence_;
-
-#elif GRAPHIC_VERSION_DIRECTX_11
-
-	GraphicContext			m_context_;
-
-#endif
 
 };
 

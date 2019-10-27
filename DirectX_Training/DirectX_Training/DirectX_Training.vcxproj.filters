@@ -40,6 +40,9 @@
     <Filter Include="DevelopEnvironment\SouceFile\Utility\DXUtil">
       <UniqueIdentifier>{9398f75a-cb2b-4a63-b740-f0d1239bb122}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DevelopEnvironment\SouceFile\Material">
+      <UniqueIdentifier>{8273045a-5c45-4f05-bae0-84b46e5badc7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DevelopEnvironment\SouceFile\Main.cpp">
@@ -51,35 +54,20 @@
     <ClCompile Include="DevelopEnvironment\SouceFile\Core\Application.cpp">
       <Filter>DevelopEnvironment\SouceFile\Core</Filter>
     </ClCompile>
-    <ClCompile Include="DevelopEnvironment\SouceFile\Core\Manager\Manager.cpp">
-      <Filter>DevelopEnvironment\SouceFile\Core\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="DevelopEnvironment\SouceFile\Core\Window.cpp">
       <Filter>DevelopEnvironment\SouceFile\Core</Filter>
     </ClCompile>
     <ClCompile Include="DevelopEnvironment\SouceFile\Core\Procedure\WindowProcedure.cpp">
       <Filter>DevelopEnvironment\SouceFile\Core\Procedure</Filter>
     </ClCompile>
-    <ClCompile Include="DevelopEnvironment\SouceFile\Core\Procedure\DialogProcedure.cpp">
-      <Filter>DevelopEnvironment\SouceFile\Core\Procedure</Filter>
-    </ClCompile>
     <ClCompile Include="DevelopEnvironment\SouceFile\Core\Graphic\Graphic.cpp">
       <Filter>DevelopEnvironment\SouceFile\Core\Graphic</Filter>
-    </ClCompile>
-    <ClCompile Include="DevelopEnvironment\SouceFile\Core\Manager\ShaderManager.cpp">
-      <Filter>DevelopEnvironment\SouceFile\Core\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="DevelopEnvironment\SouceFile\Utility\DXUtil\DirectX11Utility.cpp">
-      <Filter>DevelopEnvironment\SouceFile\Utility\DXUtil</Filter>
-    </ClCompile>
-    <ClCompile Include="DevelopEnvironment\SouceFile\Utility\DXUtil\DirectX12Utility.cpp">
-      <Filter>DevelopEnvironment\SouceFile\Utility\DXUtil</Filter>
     </ClCompile>
     <ClCompile Include="DevelopEnvironment\SouceFile\Utility\DXUtil\DirectXUtility.cpp">
       <Filter>DevelopEnvironment\SouceFile\Utility\DXUtil</Filter>
     </ClCompile>
-    <ClCompile Include="DevelopEnvironment\SouceFile\Core\Manager\PipelineStateManager.cpp">
-      <Filter>DevelopEnvironment\SouceFile\Core\Manager</Filter>
+    <ClCompile Include="DevelopEnvironment\SouceFile\Material\Material.cpp">
+      <Filter>DevelopEnvironment\SouceFile\Material</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -95,53 +83,24 @@
     <ClInclude Include="DevelopEnvironment\SouceFile\Debugger\Debugger.h">
       <Filter>DevelopEnvironment\SouceFile\Debugger</Filter>
     </ClInclude>
-    <ClInclude Include="DevelopEnvironment\SouceFile\Core\Manager\Manager.h">
-      <Filter>DevelopEnvironment\SouceFile\Core\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="DevelopEnvironment\SouceFile\Core\Window.h">
       <Filter>DevelopEnvironment\SouceFile\Core</Filter>
     </ClInclude>
     <ClInclude Include="DevelopEnvironment\SouceFile\Core\Procedure\WindowProcedure.h">
       <Filter>DevelopEnvironment\SouceFile\Core\Procedure</Filter>
     </ClInclude>
-    <ClInclude Include="DevelopEnvironment\SouceFile\Core\Procedure\DialogProcedure.h">
-      <Filter>DevelopEnvironment\SouceFile\Core\Procedure</Filter>
-    </ClInclude>
-    <ClInclude Include="DevelopEnvironment\SouceFile\Resource\resource.h">
-      <Filter>DevelopEnvironment\SouceFile\Resource</Filter>
-    </ClInclude>
     <ClInclude Include="DevelopEnvironment\SouceFile\Core\Graphic\Graphic.h">
-      <Filter>DevelopEnvironment\SouceFile\Core\Graphic</Filter>
-    </ClInclude>
-    <ClInclude Include="DevelopEnvironment\SouceFile\Core\Graphic\DirectX11.h">
       <Filter>DevelopEnvironment\SouceFile\Core\Graphic</Filter>
     </ClInclude>
     <ClInclude Include="DevelopEnvironment\SouceFile\Core\Graphic\DirectX12.h">
       <Filter>DevelopEnvironment\SouceFile\Core\Graphic</Filter>
     </ClInclude>
-    <ClInclude Include="DevelopEnvironment\SouceFile\Core\Manager\ShaderManager.h">
-      <Filter>DevelopEnvironment\SouceFile\Core\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="DevelopEnvironment\SouceFile\Utility\InheritanceList.h">
-      <Filter>DevelopEnvironment\SouceFile\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="DevelopEnvironment\SouceFile\Utility\DXUtil\DirectX11Utility.h">
-      <Filter>DevelopEnvironment\SouceFile\Utility\DXUtil</Filter>
-    </ClInclude>
-    <ClInclude Include="DevelopEnvironment\SouceFile\Utility\DXUtil\DirectX12Utility.h">
-      <Filter>DevelopEnvironment\SouceFile\Utility\DXUtil</Filter>
-    </ClInclude>
     <ClInclude Include="DevelopEnvironment\SouceFile\Utility\DXUtil\DirectXUtility.h">
       <Filter>DevelopEnvironment\SouceFile\Utility\DXUtil</Filter>
     </ClInclude>
-    <ClInclude Include="DevelopEnvironment\SouceFile\Core\Manager\PipelineStateManager.h">
-      <Filter>DevelopEnvironment\SouceFile\Core\Manager</Filter>
+    <ClInclude Include="DevelopEnvironment\SouceFile\Material\Material.h">
+      <Filter>DevelopEnvironment\SouceFile\Material</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="DevelopEnvironment\SouceFile\Resource\BeginDialog.rc">
-      <Filter>DevelopEnvironment\SouceFile\Resource</Filter>
-    </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ExecuteEnvironment\Resources\HLSL\TestShader.hlsl">

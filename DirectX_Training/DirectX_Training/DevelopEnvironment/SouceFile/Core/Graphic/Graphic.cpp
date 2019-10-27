@@ -16,6 +16,8 @@
 
 #include	"Utility/DXUtil/DirectXUtility.h"
 
+#include	"Material/Material.h"
+
 namespace th {
 namespace core {
 namespace graphic {
@@ -40,8 +42,6 @@ s32 GraphicDevice::Initialize( HWND in_h_wnd, bool in_wnd_mode ) {
 
 	HRESULT	hr = S_OK;
 
-#if GRAPHIC_VERSION_DIRECTX_12
-
 #if DEBUG_ONRY
 	{
 		ComPtr<ID3D12Debug>	debug_controller;
@@ -51,7 +51,7 @@ s32 GraphicDevice::Initialize( HWND in_h_wnd, bool in_wnd_mode ) {
 	}
 #endif
 
-	ComPtr<IDXGIFactory4>	factory;
+	/*ComPtr<IDXGIFactory4>	factory;
 	if( FAILED( CreateDXGIFactory1( IID_PPV_ARGS( &factory ) ) ) ) {
 		return RETURN_FAILURE;
 	}
@@ -66,10 +66,10 @@ s32 GraphicDevice::Initialize( HWND in_h_wnd, bool in_wnd_mode ) {
 		if( desc.VendorId == 0x10DE )	break;
 		if( desc.VendorId == 0x8086 )	break;
 
-	}
+	}*/
 
 	hr = D3D12CreateDevice(
-		adapter.Get(),
+		nullptr,
 		D3D_FEATURE_LEVEL_11_0,
 		IID_PPV_ARGS( &m_p_device_ )
 	);
@@ -77,35 +77,6 @@ s32 GraphicDevice::Initialize( HWND in_h_wnd, bool in_wnd_mode ) {
 		DEBUG_PRINT_STR( "Fail to Create GraphicDevice.\n" );
 		return RETURN_FAILURE;
 	}
-
-#elif GRAPHIC_VERSION_DIRECTX_11
-
-	D3D_FEATURE_LEVEL	feature_level;
-	D3D_FEATURE_LEVEL	feature_levels[] = { D3D_FEATURE_LEVEL_11_0 };
-
-	hr = D3D11CreateDevice(
-		nullptr,
-		D3D_DRIVER_TYPE_HARDWARE,
-		nullptr,
-		0,
-		feature_levels,
-		ARRAYSIZE( feature_levels ),
-		D3D11_SDK_VERSION,
-		&m_p_device_,
-		&feature_level,
-		nullptr
-	);
-
-	if( FAILED( hr ) ) {
-		DEBUG_PRINT_STR( "Fail to Create GraphicDevice.\n" );
-		return RETURN_FAILURE;
-	}
-	if( feature_level != D3D_FEATURE_LEVEL_11_0 ) {
-		DEBUG_PRINT_STR( "Don't Support Graphic Device.\n" );
-		return RETURN_FAILURE;
-	}
-
-#endif
 
 	return RETURN_SUCCESS;
 
@@ -118,42 +89,8 @@ void GraphicDevice::Finalize() {}
 #pragma endregion
 
 
-#pragma region GraphicContext.
-
-#if GRAPHIC_VERSION_DIRECTX_11
-
-GraphicContext::GraphicContext()
-	: m_p_context_( nullptr ) {
-}
-
-
-GraphicContext::~GraphicContext() {}
-
-
-s32 GraphicContext::Initialize( ComPtr<ID3D11Device> in_p_device ) {
-
-	if( !in_p_device ) {
-		DEBUG_PRINT_STR( "Fail to Initialize GraphicContext.\n" );
-		return RETURN_FAILURE;
-	}
-
-	in_p_device->GetImmediateContext( &m_p_context_ );
-
-	return RETURN_SUCCESS;
-
-}
-
-
-void GraphicContext::Finalize() {}
-
-#endif
-
-#pragma endregion
-
-
 #pragma region GraphicCommandQueue.
 
-#if GRAPHIC_VERSION_DIRECTX_12
 
 GraphicCommandQueue::GraphicCommandQueue()
 	: m_p_command_queue_( nullptr ) {
@@ -185,14 +122,12 @@ s32 GraphicCommandQueue::Initialize( ComPtr<ID3D12Device> in_p_device ) {
 
 void GraphicCommandQueue::Finalize() {}
 
-#endif
 
 #pragma endregion
 
 
 #pragma region GraphicCommandAllocator.
 
-#if GRAPHIC_VERSION_DIRECTX_12
 
 GraphicCommandAllocator::GraphicCommandAllocator()
 	: m_p_command_allocator_( nullptr ) {
@@ -220,14 +155,12 @@ s32 GraphicCommandAllocator::Initialize( ComPtr<ID3D12Device> in_p_device ) {
 
 void GraphicCommandAllocator::Finalize() {}
 
-#endif
 
 #pragma endregion
 
 
 #pragma region GraphicCommandList.
 
-#if GRAPHIC_VERSION_DIRECTX_12
 
 GraphicCommandList::GraphicCommandList()
 	: m_p_command_list_( nullptr ) {
@@ -267,7 +200,6 @@ s32 GraphicCommandList::Initialize(
 
 void GraphicCommandList::Finalize() {}
 
-#endif
 
 #pragma endregion
 
@@ -282,8 +214,6 @@ GraphicSwapChain::GraphicSwapChain()
 
 GraphicSwapChain::~GraphicSwapChain() {}
 
-
-#if GRAPHIC_VERSION_DIRECTX_12
 
 s32 GraphicSwapChain::Initialize(
 	HWND						in_h_wnd,
@@ -336,65 +266,15 @@ s32 GraphicSwapChain::Initialize(
 
 	m_frame_index_ = m_p_swap_chain_->GetCurrentBackBufferIndex();
 
-	return RETURN_SUCCESS;
-
-}
-
-#elif GRAPHIC_VERSION_DIRECTX_11
-
-s32 GraphicSwapChain::Initialize(
-	HWND					in_h_wnd,
-	bool					in_wnd_mode,
-	ComPtr<ID3D11Device>	in_p_device
-) {
-
-	HRESULT	hr = S_OK;
-
-	RECT	client_rect;
-	if( !GetClientRect( in_h_wnd, &client_rect ) ) {
-		DEBUG_PRINT_STR( "Fail to Get ClientRect.\n" );
-		return RETURN_FAILURE;
-	}
-
-	DXGI_SWAP_CHAIN_DESC	desc = {};
-	desc.BufferCount = FRAME_COUNT;
-	desc.BufferDesc.Width = client_rect.right;
-	desc.BufferDesc.Height = client_rect.bottom;
-	desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-	desc.BufferDesc.RefreshRate.Numerator = 60;
-	desc.BufferDesc.RefreshRate.Denominator = 1;
-	desc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-	desc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-	desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	desc.OutputWindow = in_h_wnd;
-	desc.SampleDesc.Count = 1;
-	desc.SampleDesc.Quality = 0;
-	desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-	desc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-	desc.Windowed = in_wnd_mode;
-
-	ComPtr<IDXGIFactory>	factory;
-	hr = CreateDXGIFactory( IID_PPV_ARGS( &factory ) );
+	hr = factory->MakeWindowAssociation( in_h_wnd, DXGI_MWA_NO_ALT_ENTER );
 	if( FAILED( hr ) ) {
-		DEBUG_PRINT_STR( "Fail to Create DXGIFactory.\n" );
-		return RETURN_FAILURE;
-	}
-
-	hr = factory->CreateSwapChain(
-		in_p_device.Get(),
-		&desc,
-		&m_p_swap_chain_
-	);
-	if( FAILED( hr ) ) {
-		DEBUG_PRINT_STR( "Fail to Create DXGISwapChain.\n" );
+		DEBUG_PRINT_STR( "Fail to MakeWindowAssociation.\n" );
 		return RETURN_FAILURE;
 	}
 
 	return RETURN_SUCCESS;
 
 }
-
-#endif
 
 
 void GraphicSwapChain::Finalize() {}
@@ -408,8 +288,6 @@ void GraphicSwapChain::Finalize() {}
 
 GraphicFrameBuffer::~GraphicFrameBuffer() {}
 
-
-#if GRAPHIC_VERSION_DIRECTX_12
 
 GraphicFrameBuffer::GraphicFrameBuffer()
 	: m_p_heap_( nullptr )
@@ -479,38 +357,6 @@ s32 GraphicFrameBuffer::Initialize(
 
 }
 
-#elif GRAPHIC_VERSION_DIRECTX_11
-
-GraphicFrameBuffer::GraphicFrameBuffer()
-	: m_p_frame_buffer_( nullptr ) {
-}
-
-
-s32 GraphicFrameBuffer::Initialize(
-	ComPtr<ID3D11Device>	in_p_device,
-	ComPtr<IDXGISwapChain>	in_p_swap_chain
-) {
-
-	HRESULT hr = S_OK;
-
-	ComPtr<ID3D11Texture2D>	back_buffer;
-	hr = in_p_swap_chain->GetBuffer( 0, __uuidof( ID3D11Texture2D ), ( LPVOID* )&back_buffer );
-	if( FAILED( hr ) ) {
-		DEBUG_PRINT_STR( "Fail to Get Buffer.\n" );
-		return RETURN_FAILURE;
-	}
-
-	hr = in_p_device->CreateRenderTargetView( back_buffer.Get(), nullptr, &m_p_frame_buffer_ );
-	if( FAILED( hr ) ) {
-		DEBUG_PRINT_STR( "Fail to Create FrameBuffer.\n" );
-		return RETURN_FAILURE;
-	}
-
-	return RETURN_SUCCESS;
-
-}
-
-#endif
 
 void GraphicFrameBuffer::Finalize() {}
 
@@ -523,8 +369,6 @@ void GraphicFrameBuffer::Finalize() {}
 
 GraphicDepthStencilBuffer::~GraphicDepthStencilBuffer() {}
 
-
-#if GRAPHIC_VERSION_DIRECTX_12
 
 GraphicDepthStencilBuffer::GraphicDepthStencilBuffer()
 	: m_p_heap_( nullptr )
@@ -619,12 +463,6 @@ s32 GraphicDepthStencilBuffer::Initialize(
 
 }
 
-#elif GRAPHIC_VERSION_DIRECTX_11
-
-GraphicDepthStencilBuffer::GraphicDepthStencilBuffer() {}
-
-#endif
-
 
 void GraphicDepthStencilBuffer::Finalize() {}
 
@@ -634,7 +472,6 @@ void GraphicDepthStencilBuffer::Finalize() {}
 
 #pragma region GraphicFence.
 
-#if GRAPHIC_VERSION_DIRECTX_12
 
 GraphicFence::GraphicFence()
 	: m_p_fence_( nullptr )
@@ -679,7 +516,6 @@ void GraphicFence::Finalize() {
 
 }
 
-#endif
 
 #pragma endregion
 
@@ -694,11 +530,11 @@ D3D12_VIEWPORT	g_view_port;
 D3D12_RECT		g_rect;
 
 
-ComPtr<ID3D12RootSignature>	g_root_signature;
-ComPtr<ID3D12PipelineState>	g_pipeline_state;
-
-ComPtr<ID3DBlob>	g_vertex_shader;
-ComPtr<ID3DBlob>	g_pixel_shader;
+//ComPtr<ID3D12RootSignature>	g_root_signature;
+//ComPtr<ID3D12PipelineState>	g_pipeline_state;
+//
+//ComPtr<ID3DBlob>	g_vertex_shader;
+//ComPtr<ID3DBlob>	g_pixel_shader;
 
 
 
@@ -758,6 +594,7 @@ u32							g_index_num;
 ComPtr<ID3D12Resource>		g_index_buffer;
 D3D12_INDEX_BUFFER_VIEW		g_index_buffer_view;
 
+material::Material			g_material;
 
 }
 
@@ -768,8 +605,6 @@ s32 Graphic::Initialize( HWND in_h_wnd, bool in_wnd_mode ) {
 	if( m_device_.Initialize( in_h_wnd, in_wnd_mode ) ) {
 		return RETURN_FAILURE;
 	}
-
-#if GRAPHIC_VERSION_DIRECTX_12
 
 	// コマンドキュー生成
 	if( m_command_queue_.Initialize( m_device_.Get() ) ) {
@@ -796,20 +631,6 @@ s32 Graphic::Initialize( HWND in_h_wnd, bool in_wnd_mode ) {
 		return RETURN_FAILURE;
 	}
 
-#elif GRAPHIC_VERSION_DIRECTX_11
-
-	// コンテキスト生成
-	if( m_context_.Initialize( m_device_.Get() ) ) {
-		return RETURN_FAILURE;
-	}
-
-	// SwapChain生成
-	if( m_swap_chain_.Initialize( in_h_wnd, in_wnd_mode, m_device_.Get() ) ) {
-		return RETURN_FAILURE;
-	}
-
-#endif
-
 	// FrameBuffer生成
 	if( m_frame_buffer_.Initialize( m_device_.Get(), m_swap_chain_.Get() ) ) {
 		return RETURN_FAILURE;
@@ -820,10 +641,7 @@ s32 Graphic::Initialize( HWND in_h_wnd, bool in_wnd_mode ) {
 		return RETURN_FAILURE;
 	}
 
-
-
-#if GRAPHIC_VERSION_DIRECTX_12
-
+	/*=== リソース作成 ===*/
 
 	GetClientRect( in_h_wnd, &g_rect );
 
@@ -1047,171 +865,175 @@ s32 Graphic::Initialize( HWND in_h_wnd, bool in_wnd_mode ) {
 
 
 		// PipelineState
-		{
+		//{
 
-			D3D12_GRAPHICS_PIPELINE_STATE_DESC	pipeline_state_desc = {};
+		//	D3D12_GRAPHICS_PIPELINE_STATE_DESC	pipeline_state_desc = {};
 
-			// RootSignature
-			{
+		//	// RootSignature
+		//	{
 
-				D3D12_DESCRIPTOR_RANGE	descriptor_range = {};
-				descriptor_range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
-				descriptor_range.NumDescriptors = 4;
-				descriptor_range.BaseShaderRegister = 0;
-				descriptor_range.RegisterSpace = 0;
-				descriptor_range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+		//		D3D12_DESCRIPTOR_RANGE	descriptor_range = {};
+		//		descriptor_range.RangeType = D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+		//		descriptor_range.NumDescriptors = 4;
+		//		descriptor_range.BaseShaderRegister = 0;
+		//		descriptor_range.RegisterSpace = 0;
+		//		descriptor_range.OffsetInDescriptorsFromTableStart = D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
 
-				D3D12_ROOT_PARAMETER	root_parameter = {};
-				root_parameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
-				root_parameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
-				root_parameter.DescriptorTable.NumDescriptorRanges = 1;
-				root_parameter.DescriptorTable.pDescriptorRanges = &descriptor_range;
+		//		D3D12_ROOT_PARAMETER	root_parameter = {};
+		//		root_parameter.ParameterType = D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		//		root_parameter.ShaderVisibility = D3D12_SHADER_VISIBILITY_ALL;
+		//		root_parameter.DescriptorTable.NumDescriptorRanges = 1;
+		//		root_parameter.DescriptorTable.pDescriptorRanges = &descriptor_range;
 
-				D3D12_ROOT_SIGNATURE_DESC	root_signature_desc;
-				root_signature_desc.NumParameters = 1;
-				root_signature_desc.pParameters = &root_parameter;
-				root_signature_desc.NumStaticSamplers = 0;
-				root_signature_desc.pStaticSamplers = nullptr;
-				root_signature_desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+		//		D3D12_ROOT_SIGNATURE_DESC	root_signature_desc;
+		//		root_signature_desc.NumParameters = 1;
+		//		root_signature_desc.pParameters = &root_parameter;
+		//		root_signature_desc.NumStaticSamplers = 0;
+		//		root_signature_desc.pStaticSamplers = nullptr;
+		//		root_signature_desc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
-				ComPtr<ID3DBlob>	signature;
-				ComPtr<ID3DBlob>	error;
-				if( FAILED( D3D12SerializeRootSignature(
-					&root_signature_desc,
-					D3D_ROOT_SIGNATURE_VERSION_1,
-					&signature,
-					&error
-				) ) ) {
-					return RETURN_FAILURE;
-				}
+		//		ComPtr<ID3DBlob>	signature;
+		//		ComPtr<ID3DBlob>	error;
+		//		if( FAILED( D3D12SerializeRootSignature(
+		//			&root_signature_desc,
+		//			D3D_ROOT_SIGNATURE_VERSION_1,
+		//			&signature,
+		//			&error
+		//		) ) ) {
+		//			return RETURN_FAILURE;
+		//		}
 
-				if( FAILED( m_device_.Get()->CreateRootSignature(
-					0,
-					signature->GetBufferPointer(),
-					signature->GetBufferSize(),
-					IID_PPV_ARGS( &g_root_signature )
-				) ) ) {
-					return RETURN_FAILURE;
-				}
+		//		if( FAILED( m_device_.Get()->CreateRootSignature(
+		//			0,
+		//			signature->GetBufferPointer(),
+		//			signature->GetBufferSize(),
+		//			IID_PPV_ARGS( &g_root_signature )
+		//		) ) ) {
+		//			return RETURN_FAILURE;
+		//		}
 
-				pipeline_state_desc.pRootSignature = g_root_signature.Get();
+		//		pipeline_state_desc.pRootSignature = g_root_signature.Get();
 
-			}
+		//	}
 
-			// InputLayout
-			D3D12_INPUT_ELEMENT_DESC	input_element_desc[] = {
-				{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-				{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
-			};
-			pipeline_state_desc.InputLayout = { input_element_desc, _countof( input_element_desc ) };
+		//	// InputLayout
+		//	D3D12_INPUT_ELEMENT_DESC	input_element_desc[] = {
+		//		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+		//		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+		//	};
+		//	pipeline_state_desc.InputLayout = { input_element_desc, _countof( input_element_desc ) };
 
-			// ShaderCompile
-			{
+		//	// ShaderCompile
+		//	{
 
-				if( util::dx_util::CompileShader(
-					"Resources/HLSL/DefaultVertexShader.hlsl",
-					"VSMain",
-					util::dx_util::ShaderType::VERTEX,
-					util::dx_util::ShaderVersion::VERSION_5,
-					g_vertex_shader
-				) ) {
-					return RETURN_FAILURE;
-				}
+		//		if( util::dx_util::CompileShader(
+		//			"Resources/HLSL/DefaultVertexShader.hlsl",
+		//			"VSMain",
+		//			util::dx_util::ShaderType::VERTEX,
+		//			util::dx_util::ShaderVersion::VERSION_5,
+		//			g_vertex_shader
+		//		) ) {
+		//			return RETURN_FAILURE;
+		//		}
 
-				if( util::dx_util::CompileShader(
-					"Resources/HLSL/DefaultPixelShader.hlsl",
-					"PSMain",
-					util::dx_util::ShaderType::PIXEL,
-					util::dx_util::ShaderVersion::VERSION_5,
-					g_pixel_shader
-				) ) {
-					return RETURN_FAILURE;
-				}
+		//		if( util::dx_util::CompileShader(
+		//			"Resources/HLSL/DefaultPixelShader.hlsl",
+		//			"PSMain",
+		//			util::dx_util::ShaderType::PIXEL,
+		//			util::dx_util::ShaderVersion::VERSION_5,
+		//			g_pixel_shader
+		//		) ) {
+		//			return RETURN_FAILURE;
+		//		}
 
-				{
+		//		{
 
-					D3D12_SHADER_BYTECODE	shader_bytecode;
+		//			D3D12_SHADER_BYTECODE	shader_bytecode;
 
-					shader_bytecode.pShaderBytecode = g_vertex_shader->GetBufferPointer();
-					shader_bytecode.BytecodeLength = g_vertex_shader->GetBufferSize();
-					pipeline_state_desc.VS = shader_bytecode;
+		//			shader_bytecode.pShaderBytecode = g_vertex_shader->GetBufferPointer();
+		//			shader_bytecode.BytecodeLength = g_vertex_shader->GetBufferSize();
+		//			pipeline_state_desc.VS = shader_bytecode;
 
-					shader_bytecode.pShaderBytecode = g_pixel_shader->GetBufferPointer();
-					shader_bytecode.BytecodeLength = g_pixel_shader->GetBufferSize();
-					pipeline_state_desc.PS = shader_bytecode;
+		//			shader_bytecode.pShaderBytecode = g_pixel_shader->GetBufferPointer();
+		//			shader_bytecode.BytecodeLength = g_pixel_shader->GetBufferSize();
+		//			pipeline_state_desc.PS = shader_bytecode;
 
-				}
+		//		}
 
-			}
+		//	}
 
-			// RasterizerState
-			{
+		//	// RasterizerState
+		//	{
 
-				D3D12_RASTERIZER_DESC	rasterizer_desc = {};
-				rasterizer_desc.FillMode = D3D12_FILL_MODE_SOLID;
-				rasterizer_desc.CullMode = D3D12_CULL_MODE_FRONT;
-				rasterizer_desc.FrontCounterClockwise = FALSE;
-				rasterizer_desc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
-				rasterizer_desc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
-				rasterizer_desc.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
-				rasterizer_desc.DepthClipEnable = TRUE;
-				rasterizer_desc.MultisampleEnable = FALSE;
-				rasterizer_desc.AntialiasedLineEnable = FALSE;
-				rasterizer_desc.ForcedSampleCount = 0;
-				rasterizer_desc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
-				pipeline_state_desc.RasterizerState = rasterizer_desc;
+		//		D3D12_RASTERIZER_DESC	rasterizer_desc = {};
+		//		rasterizer_desc.FillMode = D3D12_FILL_MODE_SOLID;
+		//		rasterizer_desc.CullMode = D3D12_CULL_MODE_FRONT;
+		//		rasterizer_desc.FrontCounterClockwise = FALSE;
+		//		rasterizer_desc.DepthBias = D3D12_DEFAULT_DEPTH_BIAS;
+		//		rasterizer_desc.DepthBiasClamp = D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+		//		rasterizer_desc.SlopeScaledDepthBias = D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+		//		rasterizer_desc.DepthClipEnable = TRUE;
+		//		rasterizer_desc.MultisampleEnable = FALSE;
+		//		rasterizer_desc.AntialiasedLineEnable = FALSE;
+		//		rasterizer_desc.ForcedSampleCount = 0;
+		//		rasterizer_desc.ConservativeRaster = D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+		//		pipeline_state_desc.RasterizerState = rasterizer_desc;
 
-			}
+		//	}
 
-			// BlendState
-			{
+		//	// BlendState
+		//	{
 
-				D3D12_BLEND_DESC	blend_desc = {};
-				blend_desc.AlphaToCoverageEnable = FALSE;
-				blend_desc.IndependentBlendEnable = FALSE;
-				for( UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i ) {
-					blend_desc.RenderTarget[i].BlendEnable = FALSE;
-					blend_desc.RenderTarget[i].LogicOpEnable = FALSE;
-					blend_desc.RenderTarget[i].SrcBlend = D3D12_BLEND_ONE;
-					blend_desc.RenderTarget[i].DestBlend = D3D12_BLEND_ZERO;
-					blend_desc.RenderTarget[i].BlendOp = D3D12_BLEND_OP_ADD;
-					blend_desc.RenderTarget[i].SrcBlendAlpha = D3D12_BLEND_ONE;
-					blend_desc.RenderTarget[i].DestBlendAlpha = D3D12_BLEND_ZERO;
-					blend_desc.RenderTarget[i].BlendOpAlpha = D3D12_BLEND_OP_ADD;
-					blend_desc.RenderTarget[i].LogicOp = D3D12_LOGIC_OP_NOOP;
-					blend_desc.RenderTarget[i].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
-				}
-				pipeline_state_desc.BlendState = blend_desc;
+		//		D3D12_BLEND_DESC	blend_desc = {};
+		//		blend_desc.AlphaToCoverageEnable = FALSE;
+		//		blend_desc.IndependentBlendEnable = FALSE;
+		//		for( UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i ) {
+		//			blend_desc.RenderTarget[i].BlendEnable = FALSE;
+		//			blend_desc.RenderTarget[i].LogicOpEnable = FALSE;
+		//			blend_desc.RenderTarget[i].SrcBlend = D3D12_BLEND_ONE;
+		//			blend_desc.RenderTarget[i].DestBlend = D3D12_BLEND_ZERO;
+		//			blend_desc.RenderTarget[i].BlendOp = D3D12_BLEND_OP_ADD;
+		//			blend_desc.RenderTarget[i].SrcBlendAlpha = D3D12_BLEND_ONE;
+		//			blend_desc.RenderTarget[i].DestBlendAlpha = D3D12_BLEND_ZERO;
+		//			blend_desc.RenderTarget[i].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+		//			blend_desc.RenderTarget[i].LogicOp = D3D12_LOGIC_OP_NOOP;
+		//			blend_desc.RenderTarget[i].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+		//		}
+		//		pipeline_state_desc.BlendState = blend_desc;
 
-			}
+		//	}
 
-			// DepthStencilState
-			{
+		//	// DepthStencilState
+		//	{
 
-				D3D12_DEPTH_STENCIL_DESC	depth_stencil_desc = {};
-				depth_stencil_desc.StencilEnable = FALSE;
-				depth_stencil_desc.DepthEnable = TRUE;
-				depth_stencil_desc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
-				depth_stencil_desc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
-				pipeline_state_desc.DepthStencilState = depth_stencil_desc;
-				pipeline_state_desc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
+		//		D3D12_DEPTH_STENCIL_DESC	depth_stencil_desc = {};
+		//		depth_stencil_desc.StencilEnable = FALSE;
+		//		depth_stencil_desc.DepthEnable = TRUE;
+		//		depth_stencil_desc.DepthFunc = D3D12_COMPARISON_FUNC_LESS_EQUAL;
+		//		depth_stencil_desc.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;
+		//		pipeline_state_desc.DepthStencilState = depth_stencil_desc;
+		//		pipeline_state_desc.DSVFormat = DXGI_FORMAT_D32_FLOAT;
 
-			}
+		//	}
 
-			pipeline_state_desc.SampleMask = UINT_MAX;
-			pipeline_state_desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
-			pipeline_state_desc.NumRenderTargets = 1;
-			pipeline_state_desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-			pipeline_state_desc.SampleDesc.Count = 1;
+		//	pipeline_state_desc.SampleMask = UINT_MAX;
+		//	pipeline_state_desc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		//	pipeline_state_desc.NumRenderTargets = 1;
+		//	pipeline_state_desc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+		//	pipeline_state_desc.SampleDesc.Count = 1;
 
-			if( FAILED( m_device_.Get()->CreateGraphicsPipelineState(
-				&pipeline_state_desc,
-				IID_PPV_ARGS( &g_pipeline_state )
-			) ) ) {
-				DEBUG_PRINT_STR( "Fail to Create PipelineState.\n" );
-				return RETURN_FAILURE;
-			}
+		//	if( FAILED( m_device_.Get()->CreateGraphicsPipelineState(
+		//		&pipeline_state_desc,
+		//		IID_PPV_ARGS( &g_pipeline_state )
+		//	) ) ) {
+		//		DEBUG_PRINT_STR( "Fail to Create PipelineState.\n" );
+		//		return RETURN_FAILURE;
+		//	}
 
+		//}
+
+		if( g_material.Initialize( m_device_.Get() ) ) {
+			return RETURN_FAILURE;
 		}
 
 		// 頂点バッファを作成
@@ -1368,10 +1190,6 @@ s32 Graphic::Initialize( HWND in_h_wnd, bool in_wnd_mode ) {
 
 	}
 
-
-#endif
-
-
 	return RETURN_SUCCESS;
 
 }
@@ -1499,14 +1317,13 @@ void Graphic::BeginRender() {
 
 	const f32	frame_buffer_clear_color[] = { 0.f, 0.f, 0.f, 1.f };
 
-#if GRAPHIC_VERSION_DIRECTX_12
-
 	m_command_allocator_.Get()->Reset();
-	m_command_list_.Get()->Reset( m_command_allocator_.Get().Get(), g_pipeline_state.Get() );
+	//m_command_list_.Get()->Reset( m_command_allocator_.Get().Get(), g_pipeline_state.Get() );
+	m_command_list_.Get()->Reset( m_command_allocator_.Get().Get(), g_material.GetPipelineState() );
 
 	ID3D12DescriptorHeap	*p_descriptor_heaps[] = { g_cbv_heap.Get() };
 	m_command_list_.Get()->SetDescriptorHeaps( 1, p_descriptor_heaps );
-	m_command_list_.Get()->SetGraphicsRootSignature( g_root_signature.Get() );
+	m_command_list_.Get()->SetGraphicsRootSignature( g_material.GetRootSignature() );
 	m_command_list_.Get()->SetGraphicsRootDescriptorTable( 0, g_cbv_heap->GetGPUDescriptorHandleForHeapStart() );
 
 	m_command_list_.Get()->RSSetViewports( 1, &g_view_port );
@@ -1530,21 +1347,10 @@ void Graphic::BeginRender() {
 	m_command_list_.Get()->ClearRenderTargetView( h_cpu_rtv, frame_buffer_clear_color, 0, nullptr );
 	m_command_list_.Get()->ClearDepthStencilView( h_cpu_dsv, D3D12_CLEAR_FLAG_DEPTH, 1.f, 0, 0, nullptr );
 
-#elif GRAPHIC_VERSION_DIRECTX_11
-
-	m_context_.Get()->ClearRenderTargetView(
-		m_frame_buffer_.Get().Get(),
-		frame_buffer_clear_color
-	);
-
-#endif
-
 }
 
 
 void Graphic::EndRender() {
-
-#if GRAPHIC_VERSION_DIRECTX_12
 
 	D3D12_RESOURCE_BARRIER	resource_barrier = {};
 	resource_barrier.Type					= D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -1566,16 +1372,8 @@ void Graphic::EndRender() {
 
 	m_swap_chain_.ChangeFrameIndex();
 
-#elif GRAPHIC_VERSION_DIRECTX_11
-
-	m_swap_chain_.Get()->Present( 0, 0 );
-
-#endif
-
 }
 
-
-#if GRAPHIC_VERSION_DIRECTX_12
 
 void Graphic::WaitForPreviousFrame() {
 
@@ -1600,8 +1398,6 @@ void Graphic::WaitForPreviousFrame() {
 	}
 
 }
-
-#endif
 
 
 #pragma endregion
